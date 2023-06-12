@@ -1,8 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import React, { Fragment } from "react";
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { routes } from "./routes";
 function App() {
+    // useEffect(() => {
+    //     fetchAPI();
+    // }, []);
+    // console.log("REACT_API_BACK_END: ", process.env.REACT_APP_API_URL);
+    // const fetchAPI = async () => {
+    //     const res = await axios.get(
+    //         `${process.env.REACT_APP_API_URL}/product/get-all`
+    //     );
+    //     return res.data;
+    // };
+    // const query = useQuery(["todos"], fetchAPI);
+    // console.log("query: ", query);
+
     return (
         <div>
             <Router>
