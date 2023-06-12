@@ -20,8 +20,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetUser } from "../../redux/slice/userSlice";
 import { useState } from "react";
 import Loading from "../LoadingComponent/Loading";
+import { useEffect } from "react";
+
 const HeaderComponent = () => {
+    const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
+    const [userName, setUserName] = useState("");
     const dispatch = useDispatch();
     const handleLogout = async () => {
         setLoading(true);
@@ -29,20 +33,25 @@ const HeaderComponent = () => {
         dispatch(resetUser());
         setLoading(false);
     };
+    useEffect(() => {
+        setLoading(true);
+        setUserName(user?.name);
+        setLoading(false);
+    }, [user?.name]);
     const content = (
         <div>
             <WrapperContentPopup onClick={handleLogout}>
                 Đăng xuất
             </WrapperContentPopup>
-            <WrapperContentPopup>Thông tin người dùng</WrapperContentPopup>
+            <WrapperContentPopup onClick={() => navigate("/profile-user")}>
+                Thông tin người dùng
+            </WrapperContentPopup>
         </div>
     );
     const navigate = useNavigate();
-    const user = useSelector((state) => state.user);
     const handleNavigateLogin = () => {
         navigate("/sign-in");
     };
-
     return (
         <div
             style={{
@@ -74,11 +83,13 @@ const HeaderComponent = () => {
                     <Loading isLoading={loading}>
                         <WrapperAccount>
                             <UserOutlined style={{ fontSize: "30px" }} />
-                            {user?.name ? (
+                            {user?.access_token ? (
                                 <>
                                     <Popover content={content} trigger="click">
                                         <div style={{ cursor: "pointer" }}>
-                                            {user.name}
+                                            {userName?.length
+                                                ? user?.name
+                                                : user?.email}
                                         </div>
                                     </Popover>
                                 </>
