@@ -60,7 +60,6 @@ const TableComponent = (props) => {
             name: record.name,
         }),
     };
-    console.log("data", data);
     return (
         <Loading isLoading={isLoading}>
             <Table

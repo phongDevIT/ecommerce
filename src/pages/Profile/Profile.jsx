@@ -34,7 +34,6 @@ const Profile = () => {
         UserService.updateUser(id, rests, access_token);
     });
     const { data, isLoading, isSuccess, isError } = mutation;
-    console.log("data: ", data);
     useEffect(() => {
         setEmail(user?.email);
         setName(user?.name);

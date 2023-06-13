@@ -26,7 +26,6 @@ const HomePage = () => {
             retryDelay: 1000,
         }
     );
-    console.log("data: ", products);
     return (
         <>
             <div style={{ width: "1270px", margin: "0 auto" }}>
