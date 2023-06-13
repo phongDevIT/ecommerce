@@ -22,11 +22,14 @@ import { useState } from "react";
 import Loading from "../LoadingComponent/Loading";
 import { useEffect } from "react";
 
-const HeaderComponent = () => {
+const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
     const [userName, setUserName] = useState("");
+    const [userAvatar, setUserAvatar] = useState("");
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const handleLogout = async () => {
         setLoading(true);
         await UserService.logoutUser();
@@ -37,7 +40,8 @@ const HeaderComponent = () => {
         setLoading(true);
         setUserName(user?.name);
         setLoading(false);
-    }, [user?.name]);
+        setUserAvatar(user?.avatar);
+    }, [user?.name, user?.avatar]);
     const content = (
         <div>
             <WrapperContentPopup onClick={handleLogout}>
@@ -46,9 +50,13 @@ const HeaderComponent = () => {
             <WrapperContentPopup onClick={() => navigate("/profile-user")}>
                 Thông tin người dùng
             </WrapperContentPopup>
+            {user?.isAdmin && (
+                <WrapperContentPopup onClick={() => navigate("/system/admin")}>
+                    Quản lí hệ thống
+                </WrapperContentPopup>
+            )}
         </div>
     );
-    const navigate = useNavigate();
     const handleNavigateLogin = () => {
         navigate("/sign-in");
     };
@@ -61,17 +69,26 @@ const HeaderComponent = () => {
                 justifyContent: "center",
             }}
         >
-            <WrapperHeader>
+            <WrapperHeader
+                style={{
+                    justifyContent:
+                        isHiddenSearch && isHiddenCart
+                            ? "space-between"
+                            : "unset",
+                }}
+            >
                 <Col span={5}>
                     <WrapperTextHeader>PhongDev</WrapperTextHeader>
                 </Col>
-                <Col span={13}>
-                    <ButtonInputSearch
-                        size="larger"
-                        textButton="Tìm kiếm"
-                        placeholder="input search text"
-                    />
-                </Col>
+                {!isHiddenSearch && (
+                    <Col span={13}>
+                        <ButtonInputSearch
+                            size="larger"
+                            textButton="Tìm kiếm"
+                            placeholder="input search text"
+                        />
+                    </Col>
+                )}
                 <Col
                     span={6}
                     style={{
@@ -82,7 +99,20 @@ const HeaderComponent = () => {
                 >
                     <Loading isLoading={loading}>
                         <WrapperAccount>
-                            <UserOutlined style={{ fontSize: "30px" }} />
+                            {userAvatar ? (
+                                <img
+                                    src={userAvatar}
+                                    alt="userAvatar"
+                                    style={{
+                                        height: "40px",
+                                        width: "40px",
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                    }}
+                                />
+                            ) : (
+                                <UserOutlined style={{ fontSize: "30px" }} />
+                            )}
                             {user?.access_token ? (
                                 <>
                                     <Popover content={content} trigger="click">
@@ -111,14 +141,16 @@ const HeaderComponent = () => {
                             )}
                         </WrapperAccount>
                     </Loading>
-                    <div>
-                        <ShoppingCartOutlined
-                            style={{ fontSize: "30px", color: "#fff" }}
-                        />
-                        <WrapperTextHeaderSmall>
-                            Giỏ hàng
-                        </WrapperTextHeaderSmall>
-                    </div>
+                    {!isHiddenCart && (
+                        <div>
+                            <ShoppingCartOutlined
+                                style={{ fontSize: "30px", color: "#fff" }}
+                            />
+                            <WrapperTextHeaderSmall>
+                                Giỏ hàng
+                            </WrapperTextHeaderSmall>
+                        </div>
+                    )}
                 </Col>
             </WrapperHeader>
         </div>

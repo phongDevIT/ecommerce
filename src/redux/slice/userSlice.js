@@ -8,6 +8,7 @@ const initialState = {
     avatar: "",
     access_token: "",
     id: "",
+    isAdmin: false,
 };
 
 export const userSlice = createSlice({
@@ -23,6 +24,7 @@ export const userSlice = createSlice({
                 address = "",
                 avatar = "",
                 _id = "",
+                isAdmin,
             } = action.payload;
             state.name = name;
             state.email = email;
@@ -31,6 +33,10 @@ export const userSlice = createSlice({
             state.avatar = avatar;
             state.id = _id;
             state.access_token = access_token;
+            state.isAdmin = isAdmin ? isAdmin : state.isAdmin;
+            // state.isAdmin = false;
+            // state.isAdmin = true;
+            // state.isAdmin = access_token; nào xog admin thì mở lên lấy accesstoken true ở admin thì mới vào được admin system
         },
         resetUser: (state) => {
             state.name = "";
@@ -40,6 +46,7 @@ export const userSlice = createSlice({
             state.avatar = "";
             state.id = "";
             state.access_token = "";
+            state.isAdmin = false;
         },
     },
 });

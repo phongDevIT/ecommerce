@@ -9,13 +9,16 @@ import {
     WrapperHeader,
     WrapperInput,
     WrapperLabel,
+    WrapperUploadFile,
 } from "./style";
 import * as UserService from "../../services/UserServices.js";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Message/Message";
 import { updateUser } from "../../redux/slice/userSlice";
-
+import { Button, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { getBase64 } from "../../utils";
 const Profile = () => {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -23,7 +26,9 @@ const Profile = () => {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
-    const [avatar, setAvatar] = useState("");
+    // const [avatar, setAvatar] = useState("");
+    const [avatar, setAvatar] = useState(null);
+
     const mutation = useMutationHooks((data) => {
         const { id, access_token, ...rests } = data;
         UserService.updateUser(id, rests, access_token);
@@ -61,9 +66,14 @@ const Profile = () => {
     const handleOnChangeAddress = (value) => {
         setAddress(value);
     };
-    const handleOnChangeAvatar = (value) => {
-        setAvatar(value);
+    const handleOnChangeAvatar = async ({ fileList }) => {
+        const file = fileList[0];
+        if (file && file.originFileObj) {
+            file.preview = await getBase64(file.originFileObj);
+            setAvatar(file.preview);
+        }
     };
+
     const handleUpdate = () => {
         mutation.mutate({
             id: user?.id,
@@ -74,8 +84,6 @@ const Profile = () => {
             address,
             access_token: user?.access_token,
         });
-
-        console.log("update", email, phone, name, avatar, address);
     };
     return (
         <div style={{ width: "1270px", margin: "0 auto", height: "500px" }}>
@@ -184,12 +192,26 @@ const Profile = () => {
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor="avatar">Avatar</WrapperLabel>
-                        <InputForm
-                            style={{ width: "300px" }}
-                            value={avatar}
-                            id="avatar"
-                            handleOnChange={handleOnChangeAvatar}
-                        />
+                        <WrapperUploadFile
+                            onChange={handleOnChangeAvatar}
+                            maxCount={1}
+                        >
+                            <Button icon={<UploadOutlined />}>
+                                Select File
+                            </Button>
+                        </WrapperUploadFile>
+                        {avatar && (
+                            <img
+                                src={avatar}
+                                style={{
+                                    height: "60px",
+                                    width: "60px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                }}
+                                alt="avatar"
+                            />
+                        )}
                         <ButtonComponent
                             onClick={handleUpdate}
                             size={40}
